@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interativo de Animes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>🎌 Quiz Mestre dos Animes</h1>
+        <p>Teste seus conhecimentos sobre o mundo otaku!</p>
+    </header>
+
+    <main>
+        <!-- Seção do Quiz -->
+        <section id="quiz-section" aria-live="polite">
+            <article class="quiz-card">
+                <div class="header-quiz">
+                    <span id="question-number">Pergunta 1 de 20</span>
+                    <span id="score-realtime">Pontos: 0</span>
+                </div>
+                
+                <h2 id="question-text">Carregando pergunta...</h2>
+                
+                <form id="options-form">
+                    <div id="options-container" class="options-grid">
+                        <!-- Botões de opção serão gerados via JavaScript -->
+                    </div>
+                </form>
+
+                <div id="feedback" class="feedback-msg"></div>
+                
+                <button id="next-btn" disabled>Próxima Pergunta</button>
+            </article>
+        </section>
+
+        <!-- Seção de Resultados -->
+        <section id="result-section" class="hidden">
+            <article class="result-card">
+                <h2>Fim do Quiz!</h2>
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135684.png" alt="Troféu indicando o fim do quiz" class="trophy-img">
+                <p id="final-score">Você acertou X de 20 perguntas.</p>
+                <p id="result-message"></p>
+                <button id="restart-btn">Reiniciar Quiz</button>
+            </article>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 - Desenvolvido para Fãs de Animes.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
