@@ -3,62 +3,389 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Interativo de Animes</title>
-    <!-- Fonte Moderna -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>Quiz Otaku Supremo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #1a1c2c 0%, #4a192c 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .glass-panel {
+            background: rgba(20, 20, 35, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .btn-option {
+            transition: all 0.2s ease-in-out;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-option:hover {
+            background: rgba(236, 72, 153, 0.2); /* Pink hover */
+            border-color: #ec4899;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+        }
+
+        .anime-title {
+            background: linear-gradient(to right, #ec4899, #8b5cf6, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 0px 20px rgba(236, 72, 153, 0.3);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hidden-screen {
+            display: none !important;
+        }
+    </style>
 </head>
-<body>
+<body class="p-4">
 
-    <header>
-        <h1>🎌 Quiz Mestre dos Animes</h1>
-        <p>Prove que você é um verdadeiro Otaku!</p>
-    </header>
+    <!-- Container Principal -->
+    <div class="glass-panel rounded-3xl p-8 max-w-2xl w-full mx-auto relative overflow-hidden">
+        
+        <!-- Decoração de fundo -->
+        <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-pink-500 rounded-full blur-[80px] opacity-30 pointer-events-none"></div>
+        <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-blue-500 rounded-full blur-[80px] opacity-30 pointer-events-none"></div>
 
-    <main>
-        <!-- Seção do Quiz -->
-        <section id="quiz-section" aria-live="polite">
-            <article class="quiz-card glass-panel">
-                <!-- Barra de Progresso -->
-                <div class="progress-container">
-                    <div id="progress-bar"></div>
+        <!-- TELA DE INÍCIO -->
+        <div id="start-screen" class="text-center fade-in z-10 relative">
+            <div class="mb-6 inline-block p-4 rounded-full bg-white/5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-black mb-4 anime-title tracking-tight">Quiz Otaku<br>Supremo</h1>
+            <p class="text-gray-300 text-lg mb-10">Teste seus conhecimentos sobre o mundo dos animes! São 20 perguntas para descobrir o seu verdadeiro nível de poder.</p>
+            <button onclick="startGame()" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white font-bold py-4 px-10 rounded-full text-xl transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(236,72,153,0.5)] focus:outline-none">
+                COMEÇAR O TESTE
+            </button>
+        </div>
+
+        <!-- TELA DO JOGO -->
+        <div id="game-screen" class="hidden-screen fade-in z-10 relative">
+            <div class="flex justify-between items-center mb-6">
+                <span class="text-pink-400 font-bold uppercase tracking-wider text-sm">Questão <span id="current-q-num">1</span>/20</span>
+                <span class="text-purple-400 font-bold text-sm bg-purple-900/30 px-3 py-1 rounded-full">Pontos: <span id="current-score">0</span></span>
+            </div>
+            
+            <!-- Barra de Progresso -->
+            <div class="w-full bg-gray-700/50 rounded-full h-2 mb-8">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-purple-500 h-2 rounded-full transition-all duration-300" style="width: 5%"></div>
+            </div>
+
+            <h2 id="question-text" class="text-2xl md:text-3xl font-bold mb-8 leading-tight text-white">
+                <!-- A pergunta entra aqui -->
+            </h2>
+
+            <div id="options-container" class="grid grid-cols-1 gap-4">
+                <!-- Botões de opção serão gerados aqui -->
+            </div>
+        </div>
+
+        <!-- TELA DE FIM -->
+        <div id="end-screen" class="hidden-screen text-center fade-in z-10 relative">
+            <h1 class="text-5xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">Parabéns!</h1>
+            <p class="text-gray-300 text-lg mb-8">O exame chegou ao fim.</p>
+            
+            <div class="bg-white/5 rounded-2xl p-6 mb-8 border border-white/10">
+                <p class="text-gray-400 uppercase tracking-widest text-sm font-bold mb-2">Sua Pontuação</p>
+                <div class="text-6xl font-black mb-4">
+                    <span id="final-score" class="text-pink-500">0</span><span class="text-3xl text-gray-500">/20</span>
                 </div>
-
-                <div class="header-quiz">
-                    <span id="question-number" class="badge">Pergunta 1/20</span>
-                    <span id="score-realtime" class="badge score-badge">⭐ Pontos: 0</span>
+                
+                <p class="text-gray-400 uppercase tracking-widest text-sm font-bold mb-2 mt-6">Seu Nível Otaku</p>
+                <div id="otaku-level" class="text-3xl md:text-4xl font-bold anime-title">
+                    <!-- Nível entra aqui -->
                 </div>
+                <p id="level-desc" class="text-gray-400 text-sm mt-3 italic"></p>
+            </div>
+
+            <button onclick="restartGame()" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-3 px-8 rounded-full transition-all flex items-center justify-center mx-auto gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                </svg>
+                Tentar Novamente
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // Banco de Dados de Perguntas
+        const questions = [
+            {
+                question: "Qual é o nome da Raposa de Nove Caudas selada dentro de Naruto?",
+                options: ["Shukaku", "Matatabi", "Kurama", "Son Goku"],
+                answer: 2
+            },
+            {
+                question: "Em Dragon Ball, qual é o verdadeiro nome de nascimento do Goku?",
+                options: ["Vegeta", "Kakarotto", "Raditz", "Bardock"],
+                answer: 1
+            },
+            {
+                question: "Qual é o nome do navio original (o primeiro) dos Piratas do Chapéu de Palha em One Piece?",
+                options: ["Thousand Sunny", "Oro Jackson", "Red Force", "Going Merry"],
+                answer: 3
+            },
+            {
+                question: "No anime Death Note, qual é o nome verdadeiro do detetive 'L'?",
+                options: ["L Lawliet", "Light Yagami", "Nate River", "Mihael Keehl"],
+                answer: 0
+            },
+            {
+                question: "Em Attack on Titan (Shingeki no Kyojin), qual é o nome do Titã herdado por Eren Yeager de seu pai?",
+                options: ["Titã Blindado", "Titã de Ataque", "Titã Bestial", "Titã Fundador"],
+                answer: 1
+            },
+            {
+                question: "Qual é o princípio fundamental da Alquimia em Fullmetal Alchemist?",
+                options: ["Transmutação Humana", "Pedra Filosofal", "Troca Equivalente", "Círculo de Transmutação"],
+                answer: 2
+            },
+            {
+                question: "Qual é o nome da energia vital manipulada pelos personagens em Hunter x Hunter?",
+                options: ["Chakra", "Ki", "Haki", "Nen"],
+                answer: 3
+            },
+            {
+                question: "Em Demon Slayer (Kimetsu no Yaiba), qual é a respiração original que deu origem a todas as outras?",
+                options: ["Respiração do Sol", "Respiração da Água", "Respiração das Chamas", "Respiração do Trovão"],
+                answer: 0
+            },
+            {
+                question: "Qual é o nome de herói escolhido por Izuku Midoriya em My Hero Academia?",
+                options: ["All Might", "Kacchan", "Deku", "Red Riot"],
+                answer: 2
+            },
+            {
+                question: "Quem foi o genial criador do jogo mortal 'Sword Art Online'?",
+                options: ["Kazuto Kirigaya", "Akihiko Kayaba", "Nobuyuki Sugou", "Seijirou Kikuoka"],
+                answer: 1
+            },
+            {
+                question: "Qual é o nome da cafeteria pacífica administrada por Ghouls em Tokyo Ghoul?",
+                options: ["Aogiri Tree", "Kamii", "CCG", "Anteiku"],
+                answer: 3
+            },
+            {
+                question: "Em Neon Genesis Evangelion, quem é o piloto designado para a Unidade EVA-01?",
+                options: ["Kaworu Nagisa", "Shinji Ikari", "Gendo Ikari", "Toji Suzuhara"],
+                answer: 1
+            },
+            {
+                question: "Em Jujutsu Kaisen, quem é temido e conhecido mundialmente como o 'Rei das Maldições'?",
+                options: ["Satoru Gojo", "Suguru Geto", "Ryomen Sukuna", "Mahito"],
+                answer: 2
+            },
+            {
+                question: "Qual das opções abaixo NÃO é o título de uma das partes de JoJo's Bizarre Adventure?",
+                options: ["Golden Wind", "Stardust Crusaders", "Phantom Blood", "Crimson Moon"],
+                answer: 3
+            },
+            {
+                question: "Como são chamadas as espadas purificadoras de almas usadas pelos Shinigamis em Bleach?",
+                options: ["Zanpakutou", "Nichirin", "Katana", "Bankai"],
+                answer: 0
+            },
+            {
+                question: "Qual é a habilidade especial de Satoru Fujinuma no anime 'Erased' (Boku dake ga Inai Machi)?",
+                options: ["Time Leap", "Revival", "Return by Death", "Foresight"],
+                answer: 1
+            },
+            {
+                question: "Em Code Geass, qual poder ocular é concedido a Lelouch vi Britannia?",
+                options: ["Sharingan", "Rinnegan", "Olho do Imperador", "Geass"],
+                answer: 3
+            },
+            {
+                question: "Qual é o treinamento diário que deixou Saitama careca e invencível em One Punch Man?",
+                options: ["1000 flexões, abdominais, agachamentos e 100km de corrida", "50 de cada e 5km de corrida", "100 flexões, abdominais, agachamentos e 10km de corrida", "200 de cada e 20km de corrida"],
+                answer: 2
+            },
+            {
+                question: "Qual é a bebida favorita do cientista louco Rintarou Okabe em Steins;Gate?",
+                options: ["Dr. Pepper", "Coca-Cola", "Chá Verde", "Suco de Maçã"],
+                answer: 0
+            },
+            {
+                question: "No anime de vôlei Haikyuu!!, qual é a posição em que Tobio Kageyama joga?",
+                options: ["Cortador (Spiker)", "Líbero", "Bloqueador Central (Middle Blocker)", "Levantador (Setter)"],
+                answer: 3
+            }
+        ];
+
+        // Variáveis de Estado
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // Elementos do DOM
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+        
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const currentQNum = document.getElementById('current-q-num');
+        const currentScore = document.getElementById('current-score');
+        const progressBar = document.getElementById('progress-bar');
+        
+        const finalScoreLabel = document.getElementById('final-score');
+        const otakuLevelLabel = document.getElementById('otaku-level');
+        const levelDescLabel = document.getElementById('level-desc');
+
+        // Funções do Jogo
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            updateScoreDisplay();
+            
+            startScreen.classList.add('hidden-screen');
+            endScreen.classList.add('hidden-screen');
+            gameScreen.classList.remove('hidden-screen');
+            
+            // Força reflow para reiniciar a animação
+            gameScreen.classList.remove('fade-in');
+            void gameScreen.offsetWidth;
+            gameScreen.classList.add('fade-in');
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const currentQ = questions[currentQuestionIndex];
+            
+            // Atualiza UI
+            currentQNum.innerText = currentQuestionIndex + 1;
+            progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            questionText.innerText = currentQ.question;
+            
+            // Limpa opções antigas
+            optionsContainer.innerHTML = '';
+            
+            // Cria novos botões de opção
+            currentQ.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'btn-option w-full text-left p-4 rounded-xl font-semibold text-lg text-gray-200 focus:outline-none';
                 
-                <h2 id="question-text">Carregando pergunta...</h2>
+                // Estrutura interna do botão (Letra + Texto)
+                const letter = String.fromCharCode(65 + index); // A, B, C, D
+                button.innerHTML = `<span class="inline-block bg-white/10 w-8 h-8 text-center rounded-lg leading-8 mr-3 text-pink-400">${letter}</span> ${option}`;
                 
-                <form id="options-form">
-                    <div id="options-container" class="options-grid">
-                        <!-- Botões gerados pelo JS -->
-                    </div>
-                </form>
+                button.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+        }
 
-                <div id="feedback" class="feedback-msg"></div>
-                
-                <button id="next-btn" class="action-btn" disabled>Próxima Pergunta ➔</button>
-            </article>
-        </section>
+        function selectAnswer(selectedIndex) {
+            const currentQ = questions[currentQuestionIndex];
+            
+            if (selectedIndex === currentQ.answer) {
+                score++;
+                updateScoreDisplay();
+            }
 
-        <!-- Seção de Resultados -->
-        <section id="result-section" class="hidden">
-            <article class="result-card glass-panel">
-                <h2>Fim de Jogo!</h2>
-                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135684.png" alt="Troféu de ouro brilhante" class="trophy-img">
-                <h3 id="final-score" class="gradient-text">Você acertou X de 20.</h3>
-                <p id="result-message"></p>
-                <button id="restart-btn" class="action-btn">🔄 Jogar Novamente</button>
-            </article>
-        </section>
-    </main>
+            // Vai para a próxima pergunta ou fim
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                // Pequeno delay para a transição
+                optionsContainer.style.opacity = '0';
+                setTimeout(() => {
+                    loadQuestion();
+                    optionsContainer.style.opacity = '1';
+                }, 200);
+            } else {
+                endGame();
+            }
+        }
 
-    <footer>
-        <p>&copy; 2026 - Desenvolvido para Fãs de Animes.</p>
-    </footer>
+        function updateScoreDisplay() {
+            currentScore.innerText = score;
+        }
 
-    <script src="script.js"></script>
+        function endGame() {
+            gameScreen.classList.add('hidden-screen');
+            endScreen.classList.remove('hidden-screen');
+            
+            // Força reflow para reiniciar a animação
+            endScreen.classList.remove('fade-in');
+            void endScreen.offsetWidth;
+            endScreen.classList.add('fade-in');
+
+            finalScoreLabel.innerText = score;
+
+            // Define o Nível Otaku
+            let levelTitle = "";
+            let levelColorClass = "";
+            let levelDesc = "";
+
+            if (score <= 5) {
+                levelTitle = "Normie";
+                levelDesc = "Você provavelmente só assistiu Pokémon e Dragon Ball na TV Globinho. Está na hora de maratonar algumas obras!";
+                otakuLevelLabel.style.background = "linear-gradient(to right, #9ca3af, #d1d5db)"; // Gray
+            } else if (score <= 10) {
+                levelTitle = "Genin / Aprendiz";
+                levelDesc = "Você conhece os clássicos e os animes mais famosos do momento, mas ainda tem muito caminho pela frente ninja!";
+                otakuLevelLabel.style.background = "linear-gradient(to right, #34d399, #10b981)"; // Green
+            } else if (score <= 15) {
+                levelTitle = "Jounin / Otaku de Respeito";
+                levelDesc = "Belo conhecimento! Você já gastou boas madrugadas assistindo episódios e discutindo teorias online.";
+                otakuLevelLabel.style.background = "linear-gradient(to right, #60a5fa, #3b82f6)"; // Blue
+            } else {
+                levelTitle = "Hokage / Deus do Novo Mundo";
+                levelDesc = "NANI?! Seu conhecimento é absoluto! Você respira animes, entende as referências obscuras e não pula as aberturas.";
+                otakuLevelLabel.style.background = "linear-gradient(to right, #fbbf24, #f59e0b)"; // Gold
+            }
+
+            otakuLevelLabel.innerText = levelTitle;
+            otakuLevelLabel.style.webkitBackgroundClip = "text";
+            otakuLevelLabel.style.webkitTextFillColor = "transparent";
+            levelDescLabel.innerText = `"${levelDesc}"`;
+        }
+
+        function restartGame() {
+            endScreen.classList.add('hidden-screen');
+            startScreen.classList.remove('hidden-screen');
+            
+            // Força reflow para reiniciar a animação
+            startScreen.classList.remove('fade-in');
+            void startScreen.offsetWidth;
+            startScreen.classList.add('fade-in');
+        }
+
+    </script>
 </body>
 </html>
