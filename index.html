@@ -1,391 +1,793 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Otaku Supremo</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anime Quiz | Nível Otaku</title>
 
-        body {
-            font-family: 'Nunito', sans-serif;
-            background: linear-gradient(135deg, #1a1c2c 0%, #4a192c 100%);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow-x: hidden;
-        }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@400;500;600;700;800&display=swap');
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+:root {
+    --purple: #a855f7;
+    --pink: #ec4899;
+    --blue: #38bdf8;
+    --dark: #090914;
+    --card: #151529;
+}
 
-        .glass-panel {
-            background: rgba(20, 20, 35, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        .btn-option {
-            transition: all 0.2s ease-in-out;
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-        }
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(ellipse at 20% 20%, #45116c55, transparent 45%),
+        radial-gradient(ellipse at 80% 80%, #152c6555, transparent 45%),
+        var(--dark);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
 
-        .btn-option:hover {
-            background: rgba(236, 72, 153, 0.2); /* Pink hover */
-            border-color: #ec4899;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
-        }
+.container {
+    width: 100%;
+    max-width: 720px;
+    background: rgba(21, 21, 41, .95);
+    border: 1px solid #a855f755;
+    border-radius: 24px;
+    padding: 35px;
+    box-shadow: 0 0 50px #a855f722;
+    position: relative;
+    overflow: hidden;
+}
 
-        .anime-title {
-            background: linear-gradient(to right, #ec4899, #8b5cf6, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0px 0px 20px rgba(236, 72, 153, 0.3);
-        }
+.container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(90deg, var(--purple), var(--pink), var(--blue));
+}
 
-        .fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
+.logo {
+    font-family: 'Orbitron', sans-serif;
+    text-align: center;
+    font-size: 15px;
+    letter-spacing: 5px;
+    color: var(--blue);
+    margin-bottom: 25px;
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(27px, 6vw, 43px);
+    text-align: center;
+    background: linear-gradient(90deg, #c084fc, #f472b6, #38bdf8);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 15px;
+}
 
-        .hidden-screen {
-            display: none !important;
-        }
-    </style>
+.subtitle {
+    color: #aaaac5;
+    text-align: center;
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+.screen {
+    display: none;
+    animation: appear .5s ease;
+}
+
+.screen.active {
+    display: block;
+}
+
+@keyframes appear {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.anime-icon {
+    text-align: center;
+    font-size: 75px;
+    margin: 15px 0;
+    filter: drop-shadow(0 0 20px #a855f7);
+}
+
+.info {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 25px 0;
+}
+
+.info span {
+    background: #252540;
+    border: 1px solid #a855f744;
+    padding: 10px 15px;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #d8b4fe;
+}
+
+.btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    background: linear-gradient(90deg, #9333ea, #db2777);
+    transition: .3s;
+    margin-top: 15px;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 25px #a855f766;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    color: #aaaac5;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 9px;
+    background: #292941;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--purple), var(--pink), var(--blue));
+    transition: width .4s;
+}
+
+.question {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+.answers {
+    display: grid;
+    gap: 12px;
+}
+
+.answer {
+    background: #22223b;
+    border: 1px solid #393956;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: left;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.answer:hover:not(:disabled) {
+    border-color: var(--purple);
+    background: #34204c;
+    transform: translateX(5px);
+}
+
+.answer.correct {
+    background: #14532d;
+    border-color: #22c55e;
+}
+
+.answer.wrong {
+    background: #7f1d1d;
+    border-color: #ef4444;
+}
+
+.answer:disabled {
+    cursor: default;
+    opacity: .85;
+}
+
+.feedback {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #252540;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.feedback.show {
+    display: block;
+    animation: appear .3s ease;
+}
+
+.result-icon {
+    font-size: 85px;
+    text-align: center;
+    margin: 15px;
+}
+
+.result-score {
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 55px;
+    color: #c084fc;
+    margin: 20px 0;
+}
+
+.level-card {
+    background: linear-gradient(135deg, #6b21a8, #be185d);
+    border-radius: 18px;
+    text-align: center;
+    padding: 25px;
+    margin: 20px 0;
+    box-shadow: 0 0 30px #a855f733;
+}
+
+.level-card h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    margin: 10px 0;
+}
+
+.level-card .level-emoji {
+    font-size: 45px;
+}
+
+.result-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.detail {
+    background: #252540;
+    padding: 15px;
+    text-align: center;
+    border-radius: 12px;
+}
+
+.detail strong {
+    display: block;
+    color: var(--blue);
+    font-size: 24px;
+}
+
+.detail small {
+    color: #aaaac5;
+}
+
+@media(max-width: 500px) {
+    .container {
+        padding: 25px 18px;
+    }
+    .question {
+        font-size: 17px;
+    }
+}
+</style>
 </head>
-<body class="p-4">
 
-    <!-- Container Principal -->
-    <div class="glass-panel rounded-3xl p-8 max-w-2xl w-full mx-auto relative overflow-hidden">
-        
-        <!-- Decoração de fundo -->
-        <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-pink-500 rounded-full blur-[80px] opacity-30 pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-blue-500 rounded-full blur-[80px] opacity-30 pointer-events-none"></div>
+<body>
 
-        <!-- TELA DE INÍCIO -->
-        <div id="start-screen" class="text-center fade-in z-10 relative">
-            <div class="mb-6 inline-block p-4 rounded-full bg-white/5">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </div>
-            <h1 class="text-5xl md:text-6xl font-black mb-4 anime-title tracking-tight">Quiz Otaku<br>Supremo</h1>
-            <p class="text-gray-300 text-lg mb-10">Teste seus conhecimentos sobre o mundo dos animes! São 20 perguntas para descobrir o seu verdadeiro nível de poder.</p>
-            <button onclick="startGame()" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white font-bold py-4 px-10 rounded-full text-xl transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(236,72,153,0.5)] focus:outline-none">
-                COMEÇAR O TESTE
-            </button>
+<div class="container">
+
+    <div class="logo">✦ ANIME UNIVERSE ✦</div>
+
+    <!-- TELA INICIAL -->
+    <section id="start-screen" class="screen active">
+
+        <h1>ANIME QUIZ</h1>
+
+        <div class="anime-icon">⛩️</div>
+
+        <p class="subtitle">
+            Você realmente conhece o mundo dos animes?
+            Teste seus conhecimentos, enfrente o desafio
+            e descubra qual é o seu verdadeiro nível de otaku!
+        </p>
+
+        <div class="info">
+            <span>⚔️ 20 Perguntas</span>
+            <span>🔥 1 Ponto por acerto</span>
+            <span>🏆 Ranking Otaku</span>
         </div>
 
-        <!-- TELA DO JOGO -->
-        <div id="game-screen" class="hidden-screen fade-in z-10 relative">
-            <div class="flex justify-between items-center mb-6">
-                <span class="text-pink-400 font-bold uppercase tracking-wider text-sm">Questão <span id="current-q-num">1</span>/20</span>
-                <span class="text-purple-400 font-bold text-sm bg-purple-900/30 px-3 py-1 rounded-full">Pontos: <span id="current-score">0</span></span>
-            </div>
-            
-            <!-- Barra de Progresso -->
-            <div class="w-full bg-gray-700/50 rounded-full h-2 mb-8">
-                <div id="progress-bar" class="bg-gradient-to-r from-pink-500 to-purple-500 h-2 rounded-full transition-all duration-300" style="width: 5%"></div>
-            </div>
+        <button class="btn" onclick="startQuiz()">
+            COMEÇAR DESAFIO ⚡
+        </button>
 
-            <h2 id="question-text" class="text-2xl md:text-3xl font-bold mb-8 leading-tight text-white">
-                <!-- A pergunta entra aqui -->
-            </h2>
+    </section>
 
-            <div id="options-container" class="grid grid-cols-1 gap-4">
-                <!-- Botões de opção serão gerados aqui -->
-            </div>
+    <!-- TELA DO QUIZ -->
+    <section id="quiz-screen" class="screen">
+
+        <div class="progress-info">
+            <span id="question-counter">QUESTÃO 1/20</span>
+            <span id="score-counter">⭐ 0 PONTOS</span>
         </div>
 
-        <!-- TELA DE FIM -->
-        <div id="end-screen" class="hidden-screen text-center fade-in z-10 relative">
-            <h1 class="text-5xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">Parabéns!</h1>
-            <p class="text-gray-300 text-lg mb-8">O exame chegou ao fim.</p>
-            
-            <div class="bg-white/5 rounded-2xl p-6 mb-8 border border-white/10">
-                <p class="text-gray-400 uppercase tracking-widest text-sm font-bold mb-2">Sua Pontuação</p>
-                <div class="text-6xl font-black mb-4">
-                    <span id="final-score" class="text-pink-500">0</span><span class="text-3xl text-gray-500">/20</span>
-                </div>
-                
-                <p class="text-gray-400 uppercase tracking-widest text-sm font-bold mb-2 mt-6">Seu Nível Otaku</p>
-                <div id="otaku-level" class="text-3xl md:text-4xl font-bold anime-title">
-                    <!-- Nível entra aqui -->
-                </div>
-                <p id="level-desc" class="text-gray-400 text-sm mt-3 italic"></p>
-            </div>
-
-            <button onclick="restartGame()" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-3 px-8 rounded-full transition-all flex items-center justify-center mx-auto gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-                </svg>
-                Tentar Novamente
-            </button>
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
         </div>
 
-    </div>
+        <p class="question" id="question"></p>
 
-    <script>
-        // Banco de Dados de Perguntas
-        const questions = [
-            {
-                question: "Qual é o nome da Raposa de Nove Caudas selada dentro de Naruto?",
-                options: ["Shukaku", "Matatabi", "Kurama", "Son Goku"],
-                answer: 2
-            },
-            {
-                question: "Em Dragon Ball, qual é o verdadeiro nome de nascimento do Goku?",
-                options: ["Vegeta", "Kakarotto", "Raditz", "Bardock"],
-                answer: 1
-            },
-            {
-                question: "Qual é o nome do navio original (o primeiro) dos Piratas do Chapéu de Palha em One Piece?",
-                options: ["Thousand Sunny", "Oro Jackson", "Red Force", "Going Merry"],
-                answer: 3
-            },
-            {
-                question: "No anime Death Note, qual é o nome verdadeiro do detetive 'L'?",
-                options: ["L Lawliet", "Light Yagami", "Nate River", "Mihael Keehl"],
-                answer: 0
-            },
-            {
-                question: "Em Attack on Titan (Shingeki no Kyojin), qual é o nome do Titã herdado por Eren Yeager de seu pai?",
-                options: ["Titã Blindado", "Titã de Ataque", "Titã Bestial", "Titã Fundador"],
-                answer: 1
-            },
-            {
-                question: "Qual é o princípio fundamental da Alquimia em Fullmetal Alchemist?",
-                options: ["Transmutação Humana", "Pedra Filosofal", "Troca Equivalente", "Círculo de Transmutação"],
-                answer: 2
-            },
-            {
-                question: "Qual é o nome da energia vital manipulada pelos personagens em Hunter x Hunter?",
-                options: ["Chakra", "Ki", "Haki", "Nen"],
-                answer: 3
-            },
-            {
-                question: "Em Demon Slayer (Kimetsu no Yaiba), qual é a respiração original que deu origem a todas as outras?",
-                options: ["Respiração do Sol", "Respiração da Água", "Respiração das Chamas", "Respiração do Trovão"],
-                answer: 0
-            },
-            {
-                question: "Qual é o nome de herói escolhido por Izuku Midoriya em My Hero Academia?",
-                options: ["All Might", "Kacchan", "Deku", "Red Riot"],
-                answer: 2
-            },
-            {
-                question: "Quem foi o genial criador do jogo mortal 'Sword Art Online'?",
-                options: ["Kazuto Kirigaya", "Akihiko Kayaba", "Nobuyuki Sugou", "Seijirou Kikuoka"],
-                answer: 1
-            },
-            {
-                question: "Qual é o nome da cafeteria pacífica administrada por Ghouls em Tokyo Ghoul?",
-                options: ["Aogiri Tree", "Kamii", "CCG", "Anteiku"],
-                answer: 3
-            },
-            {
-                question: "Em Neon Genesis Evangelion, quem é o piloto designado para a Unidade EVA-01?",
-                options: ["Kaworu Nagisa", "Shinji Ikari", "Gendo Ikari", "Toji Suzuhara"],
-                answer: 1
-            },
-            {
-                question: "Em Jujutsu Kaisen, quem é temido e conhecido mundialmente como o 'Rei das Maldições'?",
-                options: ["Satoru Gojo", "Suguru Geto", "Ryomen Sukuna", "Mahito"],
-                answer: 2
-            },
-            {
-                question: "Qual das opções abaixo NÃO é o título de uma das partes de JoJo's Bizarre Adventure?",
-                options: ["Golden Wind", "Stardust Crusaders", "Phantom Blood", "Crimson Moon"],
-                answer: 3
-            },
-            {
-                question: "Como são chamadas as espadas purificadoras de almas usadas pelos Shinigamis em Bleach?",
-                options: ["Zanpakutou", "Nichirin", "Katana", "Bankai"],
-                answer: 0
-            },
-            {
-                question: "Qual é a habilidade especial de Satoru Fujinuma no anime 'Erased' (Boku dake ga Inai Machi)?",
-                options: ["Time Leap", "Revival", "Return by Death", "Foresight"],
-                answer: 1
-            },
-            {
-                question: "Em Code Geass, qual poder ocular é concedido a Lelouch vi Britannia?",
-                options: ["Sharingan", "Rinnegan", "Olho do Imperador", "Geass"],
-                answer: 3
-            },
-            {
-                question: "Qual é o treinamento diário que deixou Saitama careca e invencível em One Punch Man?",
-                options: ["1000 flexões, abdominais, agachamentos e 100km de corrida", "50 de cada e 5km de corrida", "100 flexões, abdominais, agachamentos e 10km de corrida", "200 de cada e 20km de corrida"],
-                answer: 2
-            },
-            {
-                question: "Qual é a bebida favorita do cientista louco Rintarou Okabe em Steins;Gate?",
-                options: ["Dr. Pepper", "Coca-Cola", "Chá Verde", "Suco de Maçã"],
-                answer: 0
-            },
-            {
-                question: "No anime de vôlei Haikyuu!!, qual é a posição em que Tobio Kageyama joga?",
-                options: ["Cortador (Spiker)", "Líbero", "Bloqueador Central (Middle Blocker)", "Levantador (Setter)"],
-                answer: 3
-            }
-        ];
+        <div class="answers" id="answers"></div>
 
-        // Variáveis de Estado
-        let currentQuestionIndex = 0;
-        let score = 0;
+        <div class="feedback" id="feedback"></div>
 
-        // Elementos do DOM
-        const startScreen = document.getElementById('start-screen');
-        const gameScreen = document.getElementById('game-screen');
-        const endScreen = document.getElementById('end-screen');
-        
-        const questionText = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
-        const currentQNum = document.getElementById('current-q-num');
-        const currentScore = document.getElementById('current-score');
-        const progressBar = document.getElementById('progress-bar');
-        
-        const finalScoreLabel = document.getElementById('final-score');
-        const otakuLevelLabel = document.getElementById('otaku-level');
-        const levelDescLabel = document.getElementById('level-desc');
+        <button class="btn" id="next-btn"
+            style="display:none" onclick="nextQuestion()">
+            PRÓXIMA QUESTÃO ➜
+        </button>
 
-        // Funções do Jogo
-        function startGame() {
-            currentQuestionIndex = 0;
-            score = 0;
-            updateScoreDisplay();
-            
-            startScreen.classList.add('hidden-screen');
-            endScreen.classList.add('hidden-screen');
-            gameScreen.classList.remove('hidden-screen');
-            
-            // Força reflow para reiniciar a animação
-            gameScreen.classList.remove('fade-in');
-            void gameScreen.offsetWidth;
-            gameScreen.classList.add('fade-in');
+    </section>
 
-            loadQuestion();
+    <!-- TELA FINAL -->
+    <section id="result-screen" class="screen">
+
+        <h1>DESAFIO CONCLUÍDO!</h1>
+
+        <div class="result-icon" id="result-icon">🏆</div>
+
+        <p class="subtitle">
+            Parabéns por chegar até o final do desafio!
+        </p>
+
+        <div class="result-score">
+            <span id="final-score">0</span>/20
+        </div>
+
+        <div class="level-card">
+            <div class="level-emoji" id="level-emoji">🥉</div>
+            <h2 id="level-name">Otaku Iniciante</h2>
+            <p id="level-description"></p>
+        </div>
+
+        <div class="result-details">
+
+            <div class="detail">
+                <strong id="correct-count">0</strong>
+                <small>Acertos</small>
+            </div>
+
+            <div class="detail">
+                <strong id="wrong-count">0</strong>
+                <small>Erros</small>
+            </div>
+
+            <div class="detail">
+                <strong id="percentage">0%</strong>
+                <small>Aproveitamento</small>
+            </div>
+
+            <div class="detail">
+                <strong>20</strong>
+                <small>Total de questões</small>
+            </div>
+
+        </div>
+
+        <p class="subtitle" id="final-message"></p>
+
+        <button class="btn" onclick="startQuiz()">
+            🔄 JOGAR NOVAMENTE
+        </button>
+
+    </section>
+
+</div>
+
+<script>
+
+// BANCO DE QUESTÕES
+
+const questions = [
+
+{
+q: "Qual é o verdadeiro nome de L, em Death Note?",
+a: ["Light Yagami", "L Lawliet", "Near", "Mello"],
+c: 1,
+e: "L Lawliet é o verdadeiro nome do famoso detetive."
+},
+
+{
+q: "Qual é o sonho de Monkey D. Luffy em One Piece?",
+a: ["Ser o Hokage", "Encontrar o All Blue", "Ser o Rei dos Piratas", "Ser um espadachim"],
+c: 2,
+e: "Luffy deseja encontrar o One Piece e se tornar o Rei dos Piratas."
+},
+
+{
+q: "Qual é o nome da vila onde Naruto nasceu?",
+a: ["Vila da Areia", "Vila da Folha", "Vila da Névoa", "Vila da Pedra"],
+c: 1,
+e: "Naruto nasceu em Konohagakure, a Vila Oculta da Folha."
+},
+
+{
+q: "Qual é o poder principal de Goku em Dragon Ball?",
+a: ["Rasengan", "Kamehameha", "Getsuga Tensho", "Bankai"],
+c: 1,
+e: "O Kamehameha é uma das técnicas mais famosas de Goku."
+},
+
+{
+q: "Em Attack on Titan, qual é o sobrenome de Eren?",
+a: ["Ackerman", "Arlert", "Yeager", "Braun"],
+c: 2,
+e: "O protagonista é Eren Yeager."
+},
+
+{
+q: "Qual é o nome da espada de Tanjiro em Demon Slayer?",
+a: ["Nichirin", "Excalibur", "Zangetsu", "Samehada"],
+c: 0,
+e: "Tanjiro utiliza uma espada Nichirin, própria para enfrentar demônios."
+},
+
+{
+q: "Qual é o nome do irmão de Edward Elric em Fullmetal Alchemist?",
+a: ["Roy Mustang", "Alphonse Elric", "Ling Yao", "Scar"],
+c: 1,
+e: "Alphonse é o irmão mais novo de Edward."
+},
+
+{
+q: "Em Jujutsu Kaisen, quem é o professor de Yuji Itadori?",
+a: ["Kento Nanami", "Suguru Geto", "Satoru Gojo", "Toji Fushiguro"],
+c: 2,
+e: "Satoru Gojo é o poderoso professor de Yuji."
+},
+
+{
+q: "Qual é o nome do protagonista de Bleach?",
+a: ["Ichigo Kurosaki", "Renji Abarai", "Byakuya Kuchiki", "Uryu Ishida"],
+c: 0,
+e: "Ichigo Kurosaki é o protagonista de Bleach."
+},
+
+{
+q: "Em My Hero Academia, qual é o nome do poder herdado por Deku?",
+a: ["Explosion", "One For All", "All For One", "Half-Cold Half-Hot"],
+c: 1,
+e: "Deku recebe o One For All de All Might."
+},
+
+{
+q: "Qual é o nome do espírito que acompanha Ash em Pokémon?",
+a: ["Charmander", "Eevee", "Pikachu", "Mewtwo"],
+c: 2,
+e: "Pikachu é o parceiro mais conhecido de Ash."
+},
+
+{
+q: "Em Tokyo Ghoul, qual é o nome do protagonista?",
+a: ["Ken Kaneki", "Hide Nagachika", "Koutarou Amon", "Juuzou Suzuya"],
+c: 0,
+e: "Ken Kaneki é o protagonista da história."
+},
+
+{
+q: "Qual é o nome do capitão dos Piratas do Chapéu de Palha?",
+a: ["Zoro", "Sanji", "Usopp", "Monkey D. Luffy"],
+c: 3,
+e: "Monkey D. Luffy é o capitão dos Chapéus de Palha."
+},
+
+{
+q: "Em Hunter x Hunter, qual é o nome do melhor amigo de Gon?",
+a: ["Kurapika", "Killua", "Leorio", "Hisoka"],
+c: 1,
+e: "Killua Zoldyck se torna um dos melhores amigos de Gon."
+},
+
+{
+q: "Qual é o nome da escola de Kuroko no Basuke onde Kuroko joga?",
+a: ["Kaijo", "Shutoku", "Seirin", "Rakuzan"],
+c: 2,
+e: "Kuroko e Kagami jogam pelo time da Seirin."
+},
+
+{
+q: "Em Sword Art Online, qual é o nome verdadeiro de Kirito?",
+a: ["Kazuto Kirigaya", "Akihiko Kayaba", "Klein", "Nobuyuki Sugou"],
+c: 0,
+e: "Kirito é o apelido de Kazuto Kirigaya."
+},
+
+{
+q: "Qual é o nome do protagonista de Chainsaw Man?",
+a: ["Aki Hayakawa", "Denji", "Kishibe", "Hirofumi Yoshida"],
+c: 1,
+e: "Denji é o jovem protagonista que se funde com Pochita."
+},
+
+{
+q: "Em Haikyuu!!, qual é a posição de Shoyo Hinata?",
+a: ["Levantador", "Líbero", "Oposto", "Central"],
+c: 3,
+e: "Hinata joga principalmente como central no time."
+},
+
+{
+q: "Qual é o nome do protagonista de Solo Leveling?",
+a: ["Cha Hae-In", "Yoo Jinho", "Sung Jinwoo", "Go Gunhee"],
+c: 2,
+e: "Sung Jinwoo é o protagonista de Solo Leveling."
+},
+
+{
+q: "Em Spy x Family, qual é o nome da filha adotiva de Loid e Yor?",
+a: ["Yor", "Anya", "Becky", "Fiona"],
+c: 1,
+e: "Anya Forger é a filha adotiva de Loid e Yor."
+}
+
+];
+
+// VARIÁVEIS DO JOGO
+
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+// FUNÇÃO PARA TROCAR DE TELA
+
+function showScreen(screenId) {
+
+    document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
+    });
+
+    document.getElementById(screenId).classList.add("active");
+
+}
+
+// INICIAR QUIZ
+
+function startQuiz() {
+
+    currentQuestion = 0;
+    score = 0;
+
+    showScreen("quiz-screen");
+    loadQuestion();
+
+}
+
+// CARREGAR QUESTÃO
+
+function loadQuestion() {
+
+    answered = false;
+
+    const q = questions[currentQuestion];
+
+    document.getElementById("question-counter").textContent =
+        `QUESTÃO ${currentQuestion + 1}/20`;
+
+    document.getElementById("score-counter").textContent =
+        `⭐ ${score} PONTOS`;
+
+    document.getElementById("progress").style.width =
+        `${(currentQuestion / questions.length) * 100}%`;
+
+    document.getElementById("question").textContent = q.q;
+
+    document.getElementById("feedback").classList.remove("show");
+
+    document.getElementById("next-btn").style.display = "none";
+
+    const answers = document.getElementById("answers");
+
+    answers.innerHTML = "";
+
+    q.a.forEach((answer, index) => {
+
+        const button = document.createElement("button");
+
+        button.className = "answer";
+
+        button.textContent =
+            `${String.fromCharCode(65 + index)}. ${answer}`;
+
+        button.onclick = () => selectAnswer(index);
+
+        answers.appendChild(button);
+
+    });
+
+}
+
+// RESPONDER QUESTÃO
+
+function selectAnswer(selected) {
+
+    if (answered) return;
+
+    answered = true;
+
+    const q = questions[currentQuestion];
+
+    const buttons = document.querySelectorAll(".answer");
+
+    buttons.forEach((button, index) => {
+
+        button.disabled = true;
+
+        if (index === q.c) {
+            button.classList.add("correct");
         }
 
-        function loadQuestion() {
-            const currentQ = questions[currentQuestionIndex];
-            
-            // Atualiza UI
-            currentQNum.innerText = currentQuestionIndex + 1;
-            progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
-            questionText.innerText = currentQ.question;
-            
-            // Limpa opções antigas
-            optionsContainer.innerHTML = '';
-            
-            // Cria novos botões de opção
-            currentQ.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.className = 'btn-option w-full text-left p-4 rounded-xl font-semibold text-lg text-gray-200 focus:outline-none';
-                
-                // Estrutura interna do botão (Letra + Texto)
-                const letter = String.fromCharCode(65 + index); // A, B, C, D
-                button.innerHTML = `<span class="inline-block bg-white/10 w-8 h-8 text-center rounded-lg leading-8 mr-3 text-pink-400">${letter}</span> ${option}`;
-                
-                button.onclick = () => selectAnswer(index);
-                optionsContainer.appendChild(button);
-            });
+        if (index === selected && selected !== q.c) {
+            button.classList.add("wrong");
         }
 
-        function selectAnswer(selectedIndex) {
-            const currentQ = questions[currentQuestionIndex];
-            
-            if (selectedIndex === currentQ.answer) {
-                score++;
-                updateScoreDisplay();
-            }
+    });
 
-            // Vai para a próxima pergunta ou fim
-            currentQuestionIndex++;
-            
-            if (currentQuestionIndex < questions.length) {
-                // Pequeno delay para a transição
-                optionsContainer.style.opacity = '0';
-                setTimeout(() => {
-                    loadQuestion();
-                    optionsContainer.style.opacity = '1';
-                }, 200);
-            } else {
-                endGame();
-            }
-        }
+    const feedback = document.getElementById("feedback");
 
-        function updateScoreDisplay() {
-            currentScore.innerText = score;
-        }
+    if (selected === q.c) {
 
-        function endGame() {
-            gameScreen.classList.add('hidden-screen');
-            endScreen.classList.remove('hidden-screen');
-            
-            // Força reflow para reiniciar a animação
-            endScreen.classList.remove('fade-in');
-            void endScreen.offsetWidth;
-            endScreen.classList.add('fade-in');
+        score++;
 
-            finalScoreLabel.innerText = score;
+        feedback.innerHTML = `✅ <strong>Resposta correta!</strong><br>${q.e}`;
 
-            // Define o Nível Otaku
-            let levelTitle = "";
-            let levelColorClass = "";
-            let levelDesc = "";
+    } else {
 
-            if (score <= 5) {
-                levelTitle = "Normie";
-                levelDesc = "Você provavelmente só assistiu Pokémon e Dragon Ball na TV Globinho. Está na hora de maratonar algumas obras!";
-                otakuLevelLabel.style.background = "linear-gradient(to right, #9ca3af, #d1d5db)"; // Gray
-            } else if (score <= 10) {
-                levelTitle = "Genin / Aprendiz";
-                levelDesc = "Você conhece os clássicos e os animes mais famosos do momento, mas ainda tem muito caminho pela frente ninja!";
-                otakuLevelLabel.style.background = "linear-gradient(to right, #34d399, #10b981)"; // Green
-            } else if (score <= 15) {
-                levelTitle = "Jounin / Otaku de Respeito";
-                levelDesc = "Belo conhecimento! Você já gastou boas madrugadas assistindo episódios e discutindo teorias online.";
-                otakuLevelLabel.style.background = "linear-gradient(to right, #60a5fa, #3b82f6)"; // Blue
-            } else {
-                levelTitle = "Hokage / Deus do Novo Mundo";
-                levelDesc = "NANI?! Seu conhecimento é absoluto! Você respira animes, entende as referências obscuras e não pula as aberturas.";
-                otakuLevelLabel.style.background = "linear-gradient(to right, #fbbf24, #f59e0b)"; // Gold
-            }
+        feedback.innerHTML = `❌ <strong>Resposta incorreta!</strong><br>${q.e}`;
 
-            otakuLevelLabel.innerText = levelTitle;
-            otakuLevelLabel.style.webkitBackgroundClip = "text";
-            otakuLevelLabel.style.webkitTextFillColor = "transparent";
-            levelDescLabel.innerText = `"${levelDesc}"`;
-        }
+    }
 
-        function restartGame() {
-            endScreen.classList.add('hidden-screen');
-            startScreen.classList.remove('hidden-screen');
-            
-            // Força reflow para reiniciar a animação
-            startScreen.classList.remove('fade-in');
-            void startScreen.offsetWidth;
-            startScreen.classList.add('fade-in');
-        }
+    feedback.classList.add("show");
 
-    </script>
+    document.getElementById("score-counter").textContent =
+        `⭐ ${score} PONTOS`;
+
+    document.getElementById("next-btn").style.display = "block";
+
+    document.getElementById("next-btn").textContent =
+        currentQuestion === questions.length - 1
+        ? "VER RESULTADO 🏆"
+        : "PRÓXIMA QUESTÃO ➜";
+
+}
+
+// PRÓXIMA QUESTÃO
+
+function nextQuestion() {
+
+    currentQuestion++;
+
+    if (currentQuestion < questions.length) {
+
+        loadQuestion();
+
+    } else {
+
+        showResult();
+
+    }
+
+}
+
+// MOSTRAR RESULTADO
+
+function showResult() {
+
+    showScreen("result-screen");
+
+    document.getElementById("progress").style.width = "100%";
+
+    document.getElementById("final-score").textContent = score;
+
+    document.getElementById("correct-count").textContent = score;
+
+    document.getElementById("wrong-count").textContent =
+        questions.length - score;
+
+    const percent = Math.round((score / questions.length) * 100);
+
+    document.getElementById("percentage").textContent =
+        percent + "%";
+
+    let level = "";
+    let emoji = "";
+    let description = "";
+    let icon = "🏆";
+
+    if (score <= 4) {
+
+        level = "Otaku Iniciante";
+        emoji = "🥉";
+        description = "Você ainda está começando sua jornada pelo universo dos animes. Há muitos mundos para descobrir!";
+        icon = "🌱";
+
+    } else if (score <= 8) {
+
+        level = "Otaku Aprendiz";
+        emoji = "📖";
+        description = "Você já conhece alguns clássicos, mas ainda tem muito conhecimento para adquirir!";
+        icon = "⚔️";
+
+    } else if (score <= 12) {
+
+        level = "Otaku Intermediário";
+        emoji = "🥈";
+        description = "Você acompanha vários animes e conhece bons personagens. Sua jornada está evoluindo!";
+        icon = "🔥";
+
+    } else if (score <= 16) {
+
+        level = "Otaku Avançado";
+        emoji = "🥇";
+        description = "Impressionante! Seu conhecimento sobre animes está acima da média!";
+        icon = "⚡";
+
+    } else if (score <= 19) {
+
+        level = "Mestre dos Animes";
+        emoji = "👑";
+        description = "Você é uma verdadeira enciclopédia otaku! Poucos conseguem chegar tão longe!";
+        icon = "👑";
+
+    } else {
+
+        level = "Lenda Suprema Otaku";
+        emoji = "🌌";
+        description = "PERFEITO! Você acertou todas as questões! Seu conhecimento é digno de uma lenda!";
+        icon = "🌌";
+
+    }
+
+    document.getElementById("level-name").textContent = level;
+
+    document.getElementById("level-emoji").textContent = emoji;
+
+    document.getElementById("level-description").textContent =
+        description;
+
+    document.getElementById("result-icon").textContent = icon;
+
+    document.getElementById("final-message").textContent =
+        score === 20
+        ? "PERFEIÇÃO ABSOLUTA! Você dominou o Anime Quiz!"
+        : `Você acertou ${score} de 20 perguntas. Continue treinando para alcançar o nível máximo!`;
+
+}
+
+</script>
+
 </body>
 </html>
